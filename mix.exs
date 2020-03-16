@@ -1,7 +1,7 @@
 defmodule MapAgent.MixProject do
   use Mix.Project
 
-  @app :map_agent
+  @app :agency
   @version "0.1.0"
 
   def project do
@@ -89,7 +89,7 @@ defmodule MapAgent.MixProject do
       main: "readme",
       source_ref: "v#{@version}",
       canonical: "http://hexdocs.pm/#{@app}",
-      logo: "stuff/map_agent-48x48.png",
+      logo: "stuff/#{@app}-48x48.png",
       source_url: "https://github.com/am-kantox/#{@app}",
       assets: "stuff/images",
       extras: ["README.md"],

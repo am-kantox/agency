@@ -1,4 +1,4 @@
-defmodule MapAgent do
+defmodule Agency do
   @moduledoc false
 
   @type key :: any()
@@ -55,7 +55,7 @@ defmodule MapAgent do
         {:module, module, _, _} =
           Module.create(
             name,
-            quote(do: use(MapAgent.Scaffold, unquote(opts))),
+            quote(do: use(Agency.Scaffold, unquote(opts))),
             Macro.Env.location(__ENV__)
           )
 
@@ -66,7 +66,7 @@ defmodule MapAgent do
   @doc false
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
-      use MapAgent.Scaffold, opts
+      use Agency.Scaffold, opts
     end
   end
 end

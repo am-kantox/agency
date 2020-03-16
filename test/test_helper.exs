@@ -1,9 +1,9 @@
-MapAgent.agent!(TestMapAgent0)
-MapAgent.agent!(TestMapAgent1, into: %{})
-MapAgent.agent!(TestMapAgent2, into: %{})
+Agency.agent!(TestAgency0)
+Agency.agent!(TestAgency1, into: %{})
+Agency.agent!(TestAgency2, into: %{})
 
-defmodule TestMapAgent do
-  use MapAgent
+defmodule TestAgency do
+  use Agency
 
   def after_get(value), do: value * 2
 end
