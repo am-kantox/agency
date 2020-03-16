@@ -4,6 +4,7 @@ defmodule MapAgent.Scaffold do
   @functions MapAgent.__functions__()
 
   def this(container), do: container
+  def this(_, container), do: container
 
   # default implementations
   @default_implementation_ast [
@@ -55,10 +56,12 @@ defmodule MapAgent.Scaffold do
         Get the value for the specific `key` from the container,
           backed up by the `Agent`.
         """
-        @spec get(MapAgent.key()) :: MapAgent.value()
+        @spec get(MapAgent.key() | MapAgent.keys()) :: MapAgent.value()
+        def get(key) when not is_list(key), do: get([key])
+
         def get(key) do
           @name
-          |> Agent.get(Kernel, :get_in, [[key]])
+          |> Agent.get(Kernel, :get_in, [key])
           |> handle_get()
         end
 
@@ -66,12 +69,17 @@ defmodule MapAgent.Scaffold do
         Get the value for the specific `key` from the container,
           backed up by the `Agent`, and updates it.
         """
-        @spec get_and_update(MapAgent.key(), (term() -> {get_value, update_value} | :pop)) ::
-                {get_value, Access.t()}
+        @spec get_and_update(
+                MapAgent.key() | MapAgent.keys(),
+                (term() -> {get_value, update_value} | :pop)
+              ) :: get_value
               when get_value: MapAgent.value(), update_value: MapAgent.value()
+        def get_and_update(key, fun) when not is_list(key),
+          do: get_and_update([key], fun)
+
         def get_and_update(key, fun) do
           @name
-          |> Agent.get(Kernel, :get_and_update_in, [[key], fun])
+          |> Agent.get_and_update(Kernel, :get_and_update_in, [key, fun])
           |> handle_get_and_update()
         end
 
@@ -79,21 +87,25 @@ defmodule MapAgent.Scaffold do
         Pops the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec pop(MapAgent.key()) :: Access.t()
+        @spec pop(MapAgent.key() | MapAgent.keys()) :: Access.t()
+        def pop(key) when not is_list(key), do: pop([key])
+
         def pop(key) do
-          @name
-          |> Agent.update(Kernel, :pop_in, [[key]])
-          |> handle_pop()
+          {value, container} = pop_in(this(), key)
+          Agent.update(@name, MapAgent.Scaffold, :this, [container])
+          handle_pop({value, container})
         end
 
         @doc """
         Put the `value` under the specific `key` to the container,
           backed up by the `Agent`.
         """
-        @spec put(MapAgent.key(), MapAgent.value()) :: Access.t()
+        @spec put(MapAgent.key() | MapAgent.keys(), MapAgent.value()) :: Access.t()
+        def put(key, value) when not is_list(key), do: put([key], value)
+
         def put(key, value) do
           @name
-          |> Agent.update(Kernel, :put_in, [[key], value])
+          |> Agent.update(Kernel, :put_in, [key, value])
           |> handle_put()
         end
 
@@ -101,10 +113,13 @@ defmodule MapAgent.Scaffold do
         Update the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec update(MapAgent.key(), (MapAgent.value() -> MapAgent.value())) :: Access.t()
+        @spec update(MapAgent.key() | MapAgent.keys(), (MapAgent.value() -> MapAgent.value())) ::
+                Access.t()
+        def update(key, fun) when not is_list(key), do: update([key], fun)
+
         def update(key, fun) do
           @name
-          |> Agent.update(Kernel, :update_in, [[key], fun])
+          |> Agent.update(Kernel, :update_in, [key, fun])
           |> handle_update()
         end
       end

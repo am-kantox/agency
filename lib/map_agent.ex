@@ -2,6 +2,7 @@ defmodule MapAgent do
   @moduledoc false
 
   @type key :: any()
+  @type keys :: [key()]
   @type value :: any()
 
   @functions [
