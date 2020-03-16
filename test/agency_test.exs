@@ -39,6 +39,8 @@ defmodule Agency.Test do
   test "Agency.get_and_update/2" do
     assert is_nil(TestAgency2.get_and_update(:v4, &{&1, 42}))
     assert TestAgency2.get_and_update(:v4, &{&1, &1 + 1}) == 42
+    assert TestAgency2.get_and_update(:v4, fn _ -> :pop end) == 43
+    assert nil == TestAgency2.get(:v4)
   end
 
   test "Agency.update/3" do

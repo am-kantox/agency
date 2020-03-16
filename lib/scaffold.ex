@@ -10,12 +10,12 @@ defmodule Agency.Scaffold do
   @default_implementation_ast :lists.reverse([
                                 quote(do: defoverridable(Agency)),
                                 quote do
-                                  @doc false
+                                  @impl Agency
                                   def after_this(value), do: value
                                 end
                                 | Enum.map(@functions, fn {fun, _arity} ->
                                     quote do
-                                      @doc false
+                                      @impl Agency
                                       def unquote(:"after_#{fun}")(value), do: value
                                     end
                                   end)
