@@ -2,12 +2,14 @@ defmodule MapAgent.Test do
   use ExUnit.Case, async: true
 
   setup_all do
+    {:ok, pid} = TestMapAgent.start_link()
     {:ok, pid1} = TestMapAgent1.start_link()
     {:ok, pid2} = TestMapAgent2.start_link()
 
     on_exit(fn ->
       Process.exit(pid2, :normal)
       Process.exit(pid1, :normal)
+      Process.exit(pid, :normal)
     end)
   end
 
@@ -29,6 +31,11 @@ defmodule MapAgent.Test do
     assert TestMapAgent2.get(:v3) == 42
   end
 
+  test "MapAgent.get/1 with handle_get" do
+    assert TestMapAgent.put(:v3, 42) == :ok
+    assert TestMapAgent.get(:v3) == 84
+  end
+
   test "MapAgent.get_and_update/2" do
     assert is_nil(TestMapAgent2.get_and_update(:v4, &{&1, 42}))
     assert TestMapAgent2.get_and_update(:v4, &{&1, &1 + 1}) == 42
@@ -45,6 +52,6 @@ defmodule MapAgent.Test do
   test "MapAgent.pop/1" do
     assert TestMapAgent2.put(:v6, 42) == :ok
     assert TestMapAgent2.put(:v7, 42) == :ok
-    assert {42, %{v7: 42}} == TestMapAgent2.pop(:v6)
+    assert {42, %{v7: 42}} = TestMapAgent2.pop(:v6)
   end
 end

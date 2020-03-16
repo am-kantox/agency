@@ -69,4 +69,11 @@ defmodule MapAgent do
         module
     end
   end
+
+  @doc false
+  defmacro __using__(opts) do
+    quote bind_quoted: [opts: opts] do
+      use MapAgent.Scaffold, opts
+    end
+  end
 end

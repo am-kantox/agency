@@ -7,19 +7,19 @@ defmodule MapAgent.Scaffold do
   def this(_, container), do: container
 
   # default implementations
-  @default_implementation_ast [
-    quote(do: defoverridable(MapAgent)),
-    quote do
-      @doc false
-      def handle_this(value), do: value
-    end
-    | Enum.map(@functions, fn {fun, _arity} ->
-        quote do
-          @doc false
-          def unquote(:"handle_#{fun}")(value), do: value
-        end
-      end)
-  ]
+  @default_implementation_ast :lists.reverse([
+                                quote(do: defoverridable(MapAgent)),
+                                quote do
+                                  @doc false
+                                  def handle_this(value), do: value
+                                end
+                                | Enum.map(@functions, fn {fun, _arity} ->
+                                    quote do
+                                      @doc false
+                                      def unquote(:"handle_#{fun}")(value), do: value
+                                    end
+                                  end)
+                              ])
 
   @doc false
   defmacro __using__(opts) do
