@@ -5,8 +5,10 @@ defmodule Agency.Test do
     {:ok, pid} = TestAgency.start_link()
     {:ok, pid1} = TestAgency1.start_link()
     {:ok, pid2} = TestAgency2.start_link()
+    {:ok, pid3} = TestAgency3.start_link()
 
     on_exit(fn ->
+      Process.exit(pid3, :normal)
       Process.exit(pid2, :normal)
       Process.exit(pid1, :normal)
       Process.exit(pid, :normal)
@@ -55,5 +57,11 @@ defmodule Agency.Test do
     assert TestAgency2.put(:v6, 42) == :ok
     assert TestAgency2.put(:v7, 42) == :ok
     assert {42, %{v7: 42}} = TestAgency2.pop(:v6)
+  end
+
+  test "Agency Access" do
+    assert TestAgency3.put(:v8, %{v9: 42}) == :ok
+    assert get_in(TestAgency3.access(), [:v8, :v9]) == 42
+    assert pop_in(TestAgency3.access(), [:v8, :v9]) == {42, TestAgency3}
   end
 end
