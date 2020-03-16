@@ -1,8 +1,16 @@
 defmodule MapAgent do
   @moduledoc false
 
-  @rejected [replace: 3, size: 1]
-  @functions :functions |> Map.__info__() |> Enum.reject(&(&1 in @rejected))
+  @type key :: any()
+  @type value :: any()
+
+  @functions [
+    get: 2,
+    get_and_update: 3,
+    pop: 2,
+    put: 3,
+    update: 2
+  ]
 
   @doc false
   def __functions__, do: @functions
@@ -18,18 +26,18 @@ defmodule MapAgent do
   end)
 
   @doc """
-  The callback that is called from `all/0` right after
+  The callback that is called from `this/0` right after
     the `Agent` has returned the value, passing this value as
     a parameter.
   """
-  @callback handle_all(value) :: value when value: map()
+  @callback handle_this(value) :: value when value: any()
 
-  @doc """
-  The callback that is called from `size/0` right after
-    the `Agent` has returned the value, passing this value as
-    a parameter.
-  """
-  @callback handle_size(value) :: value when value: non_neg_integer()
+  # @doc """
+  # The callback that is called from `size/0` right after
+  #   the `Agent` has returned the value, passing this value as
+  #   a parameter.
+  # """
+  # @callback handle_size(value) :: value when value: non_neg_integer()
 
   @doc """
   Creates an `Agent` module.
@@ -37,17 +45,25 @@ defmodule MapAgent do
   If the module is already loaded, this is a no-op.
   """
   @spec agent!(name :: binary() | atom()) :: module()
-  def agent!(name) when is_binary(name),
-    do: agent!(Module.concat(__MODULE__, String.capitalize(name)))
+  def agent!(name, opts \\ [])
 
-  def agent!(name) when is_atom(name) do
+  def agent!(name, opts) when is_binary(name),
+    do: agent!(Module.concat(__MODULE__, String.capitalize(name)), opts)
+
+  def agent!(name, opts) when is_atom(name) do
+    opts = Macro.escape(opts)
+
     case Code.ensure_compiled(name) do
       {:module, module} ->
         module
 
       {:error, _reason} ->
         {:module, module, _, _} =
-          Module.create(name, quote(do: use(MapAgent.Scaffold)), Macro.Env.location(__ENV__))
+          Module.create(
+            name,
+            quote(do: use(MapAgent.Scaffold, unquote(opts))),
+            Macro.Env.location(__ENV__)
+          )
 
         module
     end
