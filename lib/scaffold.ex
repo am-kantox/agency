@@ -11,12 +11,12 @@ defmodule MapAgent.Scaffold do
                                 quote(do: defoverridable(MapAgent)),
                                 quote do
                                   @doc false
-                                  def handle_this(value), do: value
+                                  def after_this(value), do: value
                                 end
                                 | Enum.map(@functions, fn {fun, _arity} ->
                                     quote do
                                       @doc false
-                                      def unquote(:"handle_#{fun}")(value), do: value
+                                      def unquote(:"after_#{fun}")(value), do: value
                                     end
                                   end)
                               ])
@@ -49,7 +49,7 @@ defmodule MapAgent.Scaffold do
         def this() do
           @name
           |> Agent.get(MapAgent.Scaffold, :this, [])
-          |> handle_this()
+          |> after_this()
         end
 
         @doc """
@@ -62,7 +62,7 @@ defmodule MapAgent.Scaffold do
         def get(key) do
           @name
           |> Agent.get(Kernel, :get_in, [key])
-          |> handle_get()
+          |> after_get()
         end
 
         @doc """
@@ -80,7 +80,7 @@ defmodule MapAgent.Scaffold do
         def get_and_update(key, fun) do
           @name
           |> Agent.get_and_update(Kernel, :get_and_update_in, [key, fun])
-          |> handle_get_and_update()
+          |> after_get_and_update()
         end
 
         @doc """
@@ -93,7 +93,7 @@ defmodule MapAgent.Scaffold do
         def pop(key) do
           {value, container} = pop_in(this(), key)
           Agent.update(@name, MapAgent.Scaffold, :this, [container])
-          handle_pop({value, container})
+          after_pop({value, container})
         end
 
         @doc """
@@ -106,7 +106,7 @@ defmodule MapAgent.Scaffold do
         def put(key, value) do
           @name
           |> Agent.update(Kernel, :put_in, [key, value])
-          |> handle_put()
+          |> after_put()
         end
 
         @doc """
@@ -120,7 +120,7 @@ defmodule MapAgent.Scaffold do
         def update(key, fun) do
           @name
           |> Agent.update(Kernel, :update_in, [key, fun])
-          |> handle_update()
+          |> after_update()
         end
       end
       | @default_implementation_ast

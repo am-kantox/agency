@@ -23,7 +23,7 @@ defmodule MapAgent do
       the `Agent` has returned the value, passing this value as
       a parameter.
     """
-    @callback unquote(:"handle_#{fun}")(value) :: value when value: any()
+    @callback unquote(:"after_#{fun}")(value) :: value when value: any()
   end)
 
   @doc """
@@ -31,14 +31,7 @@ defmodule MapAgent do
     the `Agent` has returned the value, passing this value as
     a parameter.
   """
-  @callback handle_this(value) :: value when value: any()
-
-  # @doc """
-  # The callback that is called from `size/0` right after
-  #   the `Agent` has returned the value, passing this value as
-  #   a parameter.
-  # """
-  # @callback handle_size(value) :: value when value: non_neg_integer()
+  @callback after_this(value) :: value when value: any()
 
   @doc """
   Creates an `Agent` module.

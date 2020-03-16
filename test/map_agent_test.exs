@@ -31,7 +31,7 @@ defmodule MapAgent.Test do
     assert TestMapAgent2.get(:v3) == 42
   end
 
-  test "MapAgent.get/1 with handle_get" do
+  test "MapAgent.get/1 with after_get" do
     assert TestMapAgent.put(:v3, 42) == :ok
     assert TestMapAgent.get(:v3) == 84
   end

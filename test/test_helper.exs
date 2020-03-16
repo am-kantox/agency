@@ -5,7 +5,7 @@ MapAgent.agent!(TestMapAgent2, into: %{})
 defmodule TestMapAgent do
   use MapAgent
 
-  def handle_get(value), do: value * 2
+  def after_get(value), do: value * 2
 end
 
 ExUnit.start()
