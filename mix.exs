@@ -93,7 +93,11 @@ defmodule MapAgent.MixProject do
       source_url: "https://github.com/am-kantox/#{@app}",
       assets: "stuff/images",
       extras: ["README.md"],
-      groups_for_modules: []
+      groups_for_modules: [
+        "Generated Example": [
+          TestAgency
+        ]
+      ]
     ]
   end
 end
