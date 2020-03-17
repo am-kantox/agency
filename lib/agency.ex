@@ -50,6 +50,7 @@ defmodule Agency do
 
   @type key :: any()
   @type keys :: [key()]
+  @type keyz :: key() | keys()
   @type value :: any()
 
   @functions [

@@ -1,7 +1,8 @@
 defmodule Agency.Scaffold do
   @moduledoc false
 
-  @access_impl_ast Agency.Impl.access_impl_ast()
+  # credo:disable-for-this-file Credo.Check.Refactor.LongQuoteBlocks
+
   @agency_impl_ast Agency.Impl.agency_impl_ast()
 
   def this(container), do: container
@@ -20,7 +21,9 @@ defmodule Agency.Scaffold do
         @behaviour Agency
         @behaviour Access
 
-        @raw_data Keyword.get(unquote(opts), :data, name: __MODULE__)
+        @name Keyword.get(unquote(opts), :name, __MODULE__)
+
+        @raw_data Keyword.get(unquote(opts), :data, name: @name)
         @data for {k, v} <- @raw_data, do: {k, v}
         defstruct @data
 
@@ -40,30 +43,43 @@ defmodule Agency.Scaffold do
         The argument passed to the function is ignored.
         """
         @spec start_link(opts :: keyword()) :: GenServer.on_start()
-        def start_link(_opts \\ []),
-          do: Agent.start_link(fn -> @into end, name: __MODULE__)
+        def start_link(opts \\ []) do
+          name = Keyword.get(opts, :name, @name)
+          Agent.start_link(fn -> @into end, name: name)
+        end
 
         @doc """
         Returns the whole container, backed up by the `Agent`.
         """
-        @spec this() :: Access.t()
-        def this do
-          __MODULE__
+        @spec this(GenServer.name()) :: Access.t()
+        def this(name \\ @name) do
+          name
           |> Agent.get(Agency.Scaffold, :this, [])
           |> after_this()
+        end
+
+        @impl Access
+        def fetch(%data{}, key) do
+          case data.get(key) do
+            nil -> :error
+            found -> {:ok, found}
+          end
         end
 
         @doc """
         Get the value for the specific `key` from the container,
           backed up by the `Agent`.
         """
-        @spec get(Agency.key() | Agency.keys()) :: Agency.value()
-        def get(key) when not is_list(key), do: get([key])
+        @spec get(GenServer.name(), Agency.keyz()) :: Agency.value()
+        def get(name \\ @name, key)
 
-        def get(key) do
+        def get(name, key) when not is_list(key),
+          do: get(name, [key])
+
+        def get(name, key) do
           key = key |> before_all() |> before_get()
 
-          __MODULE__
+          name
           |> Agent.get(Kernel, :get_in, [key])
           |> after_get()
         end
@@ -73,17 +89,34 @@ defmodule Agency.Scaffold do
           backed up by the `Agent`, and updates it.
         """
         @spec get_and_update(
-                Agency.key() | Agency.keys(),
+                GenServer.name(),
+                Agency.keyz(),
                 (Agency.value() -> {get_value, update_value} | :pop)
-              ) :: get_value
+              ) :: {get_value, Access.container()}
               when get_value: Agency.value(), update_value: Agency.value()
-        def get_and_update(key, fun) when not is_list(key),
-          do: get_and_update([key], fun)
+        def get_and_update(name \\ @name, key, fun)
 
-        def get_and_update(key, fun) do
+        @impl Access
+        def get_and_update(%data{}, key, fun) do
+          old_value = data.get(key)
+
+          case fun.(old_value) do
+            :pop ->
+              data.pop(key)
+
+            {get_value, update_value} ->
+              data.put(key, update_value)
+              {get_value, data}
+          end
+        end
+
+        def get_and_update(name, key, fun) when not is_list(key),
+          do: get_and_update(name, [key], fun)
+
+        def get_and_update(name, key, fun) do
           key = key |> before_all() |> before_get_and_update()
 
-          __MODULE__
+          name
           |> Agent.get_and_update(Kernel, :get_and_update_in, [key, fun])
           |> after_get_and_update()
         end
@@ -92,13 +125,22 @@ defmodule Agency.Scaffold do
         Pops the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec pop(Agency.key() | Agency.keys()) :: Access.t()
-        def pop(key) when not is_list(key), do: pop([key])
+        @spec pop(GenServer.name(), Agency.keyz()) ::
+                {Agency.value(), Access.container()}
+        def pop(name \\ @name, key)
 
-        def pop(key) do
+        @impl Access
+        def pop(%data{}, key) do
+          data.pop(key)
+        end
+
+        def pop(name, key) when not is_list(key),
+          do: pop(name, [key])
+
+        def pop(name, key) do
           key = key |> before_all() |> before_pop()
           {value, container} = pop_in(this(), key)
-          Agent.update(__MODULE__, Agency.Scaffold, :this, [container])
+          Agent.update(name, Agency.Scaffold, :this, [container])
           after_pop({value, container})
         end
 
@@ -106,13 +148,16 @@ defmodule Agency.Scaffold do
         Put the `value` under the specific `key` to the container,
           backed up by the `Agent`.
         """
-        @spec put(Agency.key() | Agency.keys(), Agency.value()) :: Access.t()
-        def put(key, value) when not is_list(key), do: put([key], value)
+        @spec put(GenServer.name(), Agency.keyz(), Agency.value()) :: :ok
+        def put(name \\ @name, key, value)
 
-        def put(key, value) do
+        def put(name, key, value) when not is_list(key),
+          do: put(name, [key], value)
+
+        def put(name, key, value) do
           key = key |> before_all() |> before_put()
 
-          __MODULE__
+          name
           |> Agent.update(Kernel, :put_in, [key, value])
           |> after_put()
         end
@@ -121,19 +166,21 @@ defmodule Agency.Scaffold do
         Update the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec update(Agency.key() | Agency.keys(), (Agency.value() -> Agency.value())) ::
-                Access.t()
-        def update(key, fun) when not is_list(key), do: update([key], fun)
+        @spec update(GenServer.name(), Agency.keyz(), (Agency.value() -> Agency.value())) :: :ok
+        def update(name \\ @name, key, fun)
 
-        def update(key, fun) do
+        def update(name, key, fun) when not is_list(key),
+          do: update(name, [key], fun)
+
+        def update(name, key, fun) do
           key = key |> before_all() |> before_update()
 
-          __MODULE__
+          name
           |> Agent.update(Kernel, :update_in, [key, fun])
           |> after_update()
         end
-      end,
-      @access_impl_ast | @agency_impl_ast
+      end
+      | @agency_impl_ast
     ]
   end
 end
