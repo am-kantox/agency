@@ -6,8 +6,10 @@ defmodule Agency.Test do
     {:ok, pid1} = TestAgency1.start_link()
     {:ok, pid2} = TestAgency2.start_link()
     {:ok, pid3} = TestAgency3.start_link()
+    {:ok, pid4} = TestAgency4.start_link(name: TA4)
 
     on_exit(fn ->
+      Process.exit(pid4, :normal)
       Process.exit(pid3, :normal)
       Process.exit(pid2, :normal)
       Process.exit(pid1, :normal)
@@ -64,5 +66,17 @@ defmodule Agency.Test do
     assert TestAgency3.put(:v8, %{v9: 42}) == :ok
     assert get_in(TestAgency3.access(), [:v8, :v9]) == 42
     assert pop_in(TestAgency3.access(), [:v8, :v9]) == {42, TestAgency3}
+  end
+
+  test "Named Agency" do
+    assert TestAgency4.put(TA4, :v8, 42) == :ok
+    assert TestAgency4.get(TA4, :v8) == 42
+
+    Process.flag(:trap_exit, true)
+    pid = spawn_link(fn -> TestAgency4.get(:v8) end)
+
+    assert_receive {:EXIT, ^pid,
+                    {:noproc,
+                     {GenServer, :call, [TestAgency4, {:get, {Kernel, :get_in, [[:v8]]}}, 5000]}}}
   end
 end
