@@ -11,10 +11,10 @@ defmodule Agency do
   All the standard CRUD-like calls are done through containers’
   `Access` implementation, allowing transparent shared access.
 
-  The set of `after_***/1` functions are introduced, so that the main
-  `Agent` feature distinguishing it from the standard `GenServer`
-  holding state—namely, a separation of client and server APIs—is
-  exposed transparently to the consumers.
+  The set of `before_***/1` and `after_***/1` functions are introduced,
+  so that the main `Agent` feature distinguishing it from the standard
+  `GenServer` holding state—namely, a separation of client and server
+  APIs—is exposed transparently to the consumers.
 
   Consider the following example.
 
@@ -53,10 +53,10 @@ defmodule Agency do
   @type value :: any()
 
   @functions [
-    get: 2,
-    get_and_update: 3,
-    pop: 2,
-    put: 3,
+    get: 1,
+    get_and_update: 2,
+    pop: 1,
+    put: 2,
     update: 2
   ]
 
@@ -64,13 +64,32 @@ defmodule Agency do
   def __functions__, do: @functions
 
   # callbacks
+  @doc """
+  The callback that is called from all the interface
+    methods (but `this/0`) right before the `Agent`
+    is to be called.
+
+    Specific handlers take precedence over this one.
+  """
+  @callback before_all(key()) :: key()
+
   Enum.each(@functions, fn {fun, arity} ->
+    @doc """
+    The callback that is called from `#{fun}/#{arity}` right before
+      the `Agent` is to be called, passing key as an argument.
+
+    It should return a modified key. Note that the `key` here
+    is _always_ represented a list, even if the single value
+    was passed to the interface function.
+    """
+    @callback unquote(:"before_#{fun}")(key) :: key when key: keys()
+
     @doc """
     The callback that is called from `#{fun}/#{arity}` right after
       the `Agent` has returned the value, passing this value as
       a parameter.
     """
-    @callback unquote(:"after_#{fun}")(value) :: value when value: any()
+    @callback unquote(:"after_#{fun}")(value) :: value when value: value()
   end)
 
   @doc """
@@ -78,7 +97,7 @@ defmodule Agency do
     the `Agent` has returned the value, passing this value as
     a parameter.
   """
-  @callback after_this(value) :: value when value: any()
+  @callback after_this(value()) :: Access.t()
 
   @doc """
   Creates an `Agent` module.
