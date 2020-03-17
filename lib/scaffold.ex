@@ -1,6 +1,8 @@
 defmodule Agency.Scaffold do
   @moduledoc false
 
+  # credo:disable-for-this-file Credo.Check.Refactor.LongQuoteBlocks
+
   @agency_impl_ast Agency.Impl.agency_impl_ast()
 
   def this(container), do: container
@@ -90,7 +92,7 @@ defmodule Agency.Scaffold do
                 GenServer.name(),
                 Agency.keyz(),
                 (Agency.value() -> {get_value, update_value} | :pop)
-              ) :: get_value
+              ) :: {get_value, Access.container()}
               when get_value: Agency.value(), update_value: Agency.value()
         def get_and_update(name \\ @name, key, fun)
 
@@ -100,7 +102,6 @@ defmodule Agency.Scaffold do
 
           case fun.(old_value) do
             :pop ->
-              IO.inspect({data, key, old_value})
               data.pop(key)
 
             {get_value, update_value} ->
@@ -124,7 +125,8 @@ defmodule Agency.Scaffold do
         Pops the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec pop(GenServer.name(), Agency.keyz()) :: Access.t()
+        @spec pop(GenServer.name(), Agency.keyz()) ::
+                {Agency.value(), Access.container()}
         def pop(name \\ @name, key)
 
         @impl Access

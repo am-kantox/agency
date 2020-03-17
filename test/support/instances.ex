@@ -1,4 +1,5 @@
 defmodule TestAgency do
+  @moduledoc false
   use Agency
 
   def before_put(_key), do: [:foo]
