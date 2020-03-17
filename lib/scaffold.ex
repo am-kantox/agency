@@ -61,6 +61,8 @@ defmodule Agency.Scaffold do
         def get(key) when not is_list(key), do: get([key])
 
         def get(key) do
+          key = key |> before_all() |> before_get()
+
           __MODULE__
           |> Agent.get(Kernel, :get_in, [key])
           |> after_get()
@@ -72,13 +74,15 @@ defmodule Agency.Scaffold do
         """
         @spec get_and_update(
                 Agency.key() | Agency.keys(),
-                (term() -> {get_value, update_value} | :pop)
+                (Agency.value() -> {get_value, update_value} | :pop)
               ) :: get_value
               when get_value: Agency.value(), update_value: Agency.value()
         def get_and_update(key, fun) when not is_list(key),
           do: get_and_update([key], fun)
 
         def get_and_update(key, fun) do
+          key = key |> before_all() |> before_get_and_update()
+
           __MODULE__
           |> Agent.get_and_update(Kernel, :get_and_update_in, [key, fun])
           |> after_get_and_update()
@@ -92,6 +96,7 @@ defmodule Agency.Scaffold do
         def pop(key) when not is_list(key), do: pop([key])
 
         def pop(key) do
+          key = key |> before_all() |> before_pop()
           {value, container} = pop_in(this(), key)
           Agent.update(__MODULE__, Agency.Scaffold, :this, [container])
           after_pop({value, container})
@@ -105,6 +110,8 @@ defmodule Agency.Scaffold do
         def put(key, value) when not is_list(key), do: put([key], value)
 
         def put(key, value) do
+          key = key |> before_all() |> before_put()
+
           __MODULE__
           |> Agent.update(Kernel, :put_in, [key, value])
           |> after_put()
@@ -119,6 +126,8 @@ defmodule Agency.Scaffold do
         def update(key, fun) when not is_list(key), do: update([key], fun)
 
         def update(key, fun) do
+          key = key |> before_all() |> before_update()
+
           __MODULE__
           |> Agent.update(Kernel, :update_in, [key, fun])
           |> after_update()

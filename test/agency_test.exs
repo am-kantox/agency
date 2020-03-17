@@ -33,9 +33,10 @@ defmodule Agency.Test do
     assert TestAgency2.get(:v3) == 42
   end
 
-  test "Agency.get/1 with after_get" do
+  test "Agency.get/1 with after_get and before_put" do
     assert TestAgency.put(:v3, 42) == :ok
-    assert TestAgency.get(:v3) == 84
+    assert TestAgency.get(:v3) == ""
+    assert TestAgency.get(:foo) == "42"
   end
 
   test "Agency.get_and_update/2" do
