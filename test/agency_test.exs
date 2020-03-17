@@ -79,4 +79,14 @@ defmodule Agency.Test do
                     {:noproc,
                      {GenServer, :call, [TestAgency4, {:get, {Kernel, :get_in, [[:v8]]}}, 5000]}}}
   end
+
+  test "Multiple named instances of Agency" do
+    assert {:ok, pid1} = TestAgency5.start_link(name: TA5_1)
+    assert {:ok, pid2} = TestAgency5.start_link(name: TA5_2)
+    assert Process.alive?(pid1)
+    assert Process.alive?(pid2)
+    Process.exit(pid1, :normal)
+    assert Process.alive?(pid2)
+    Process.exit(pid2, :normal)
+  end
 end
