@@ -148,7 +148,7 @@ defmodule Agency.Scaffold do
         Put the `value` under the specific `key` to the container,
           backed up by the `Agent`.
         """
-        @spec put(GenServer.name(), Agency.keyz(), Agency.value()) :: Access.t()
+        @spec put(GenServer.name(), Agency.keyz(), Agency.value()) :: :ok
         def put(name \\ @name, key, value)
 
         def put(name, key, value) when not is_list(key),
@@ -166,8 +166,7 @@ defmodule Agency.Scaffold do
         Update the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec update(GenServer.name(), Agency.keyz(), (Agency.value() -> Agency.value())) ::
-                Access.t()
+        @spec update(GenServer.name(), Agency.keyz(), (Agency.value() -> Agency.value())) :: :ok
         def update(name \\ @name, key, fun)
 
         def update(name, key, fun) when not is_list(key),
