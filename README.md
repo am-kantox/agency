@@ -1,4 +1,4 @@
-# ![Logo](/stuff/logo-48x48.png?raw=true)  Agency
+# ![Logo](/stuff/agency-48x48.png?raw=true)  Agency
 
 ![Test](https://github.com/am-kantox/agency/workflows/Test/badge.svg)  **One more unnecessary abstraction on top of `Agent`**
 
