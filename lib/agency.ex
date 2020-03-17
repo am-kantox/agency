@@ -39,6 +39,11 @@ defmodule Agency do
 
   `use Agency` accepts two options:
 
+  - `name: GenServer.name()` the name, this process will be identified by.
+  Optional, if not given the only instance of the `Agent` is allowed.
+  If given, all the subsequent calls to CRUD functions must include
+  this name as the first parameter. In that case, multiple instances
+  are allowed
   - `into: Access.t()` the container to be used by `Agent`
   - `data: map() | keyword()` the static data to be held by the instances
 
