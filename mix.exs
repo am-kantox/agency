@@ -74,7 +74,7 @@ defmodule MapAgent.MixProject do
   defp package do
     [
       name: @app,
-      files: ~w|config stuff lib mix.exs README.md|,
+      files: ~w|stuff lib mix.exs README.md|,
       maintainers: ["Aleksei Matiushkin"],
       licenses: ["MIT"],
       links: %{
