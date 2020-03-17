@@ -85,6 +85,13 @@ defmodule Agency.Test do
     assert {:ok, pid2} = TestAgency5.start_link(name: TA5_2)
     assert Process.alive?(pid1)
     assert Process.alive?(pid2)
+
+    assert TestAgency5.put(TA5_1, :v5_1, 42) == :ok
+    assert TestAgency5.get(TA5_1, :v5_1) == 42
+    assert TestAgency5.put(TA5_2, :v5_1, :bar) == :ok
+    assert TestAgency5.get(TA5_2, :v5_1) == :bar
+    assert TestAgency5.get(TA5_1, :v5_1) == 42
+
     Process.exit(pid1, :normal)
     assert Process.alive?(pid2)
     Process.exit(pid2, :normal)
