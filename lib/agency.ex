@@ -1,5 +1,52 @@
 defmodule Agency do
-  @moduledoc false
+  @moduledoc """
+  `Agency` is an abstraction layer above `Agent` allowing to use any
+  container supporting `Access` behind and simplifying the client API
+  handling.
+
+  `Agency` itself implements `Access` behaviour, making it possible to
+  embed instances in the middle of `Access.keys` chains.
+
+  In a nutshell, `Agency` backs up the `Agent` holding a container.
+  All the standard CRUD-like calls are done through containers’
+  `Access` implementation, allowing transparent shared access.
+
+  The set of `after_***/1` functions are introduced, so that the main
+  `Agent` feature distinguishing it from the standard `GenServer`
+  holding state—namely, a separation of client and server APIs—is
+  exposed transparently to the consumers.
+
+  Consider the following example.
+
+  ```elixir
+  defmodule MyAgent do
+    use Agency, into: %{} # default
+
+    def after_get(value) do
+      value + 1
+    end
+
+    ...
+  end
+  ```
+
+  The above code introduces an `Agent` backing up `Map` and
+  exposes the standard CRUD-like functionality. After the value
+  would be got from the server API, it’d be increased by `1`
+  and returned to the consumer.
+
+  ### Options
+
+  `use Agency` accepts two options:
+
+  - `into: Access.t()` the container to be used by `Agent`
+  - `data: map() | keyword()` the static data to be held by the instances
+
+  ---
+
+  One might also pass any struct, or whatever else implementing
+  `Access` as `into:` option to be used as an `Agent` container.
+  """
 
   @type key :: any()
   @type keys :: [key()]

@@ -1,7 +1,7 @@
 Agency.agent!(TestAgency0)
 Agency.agent!(TestAgency1, into: %{})
 Agency.agent!(TestAgency2, into: %{})
-Agency.agent!(TestAgency3)
+Agency.agent!(TestAgency3, data: %{name: "Agent", pi: 3.14})
 
 defmodule TestAgency do
   use Agency

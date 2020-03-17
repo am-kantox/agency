@@ -1,21 +1,34 @@
-# MapAgent
+# Agency
 
-**TODO: Add description**
+**One more unnecessary abstraction on top of `Agent`**
+
+## Introduction
+
+`Agency` is an abstraction layer above `Agent` allowing to use any
+container supporting `Access` behind and simplifying the client API
+handling.
+
+`Agency` itself implements `Access` behaviour, making it possible to
+embed instances in the middle of `Access.keys` chains.
+
+In a nutshell, `Agency` backs up the `Agent` holding a container.
+All the standard CRUD-like calls are done through containers’
+`Access` implementation, allowing transparent shared access.
+
+The set of `after_***/1` functions are introduced, so that the main
+`Agent` feature distinguishing it from the standard `GenServer`
+holding state—namely, a separation of client and server APIs—is
+exposed transparently to the consumers.
 
 ## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `map_agent` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:map_agent, "~> 0.1.0"}
+    {:agency, "~> 0.1"}
   ]
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/map_agent](https://hexdocs.pm/map_agent).
+## [Documentation](https://hexdocs.pm/agency).
 

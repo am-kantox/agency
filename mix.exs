@@ -11,7 +11,7 @@ defmodule MapAgent.MixProject do
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      preferred_cli_env: ["test.cluster": :test],
+      preferred_cli_env: ["quality.ci": :ci, quality: :ci],
       description: description(),
       package: package(),
       deps: deps(),

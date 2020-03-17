@@ -11,14 +11,20 @@ defmodule Agency.Scaffold do
   defmacro __using__(opts) do
     [
       quote location: :keep do
+        @into Keyword.get(unquote(opts), :into, %{})
+
+        @moduledoc """
+        The `Agent` backing up the `#{inspect(@into)}` instance.
+        """
+
         @behaviour Agency
         @behaviour Access
 
-        defstruct name: Keyword.get(unquote(opts), :name, __MODULE__)
+        @raw_data Keyword.get(unquote(opts), :data, name: __MODULE__)
+        @data for {k, v} <- @raw_data, do: {k, v}
+        defstruct @data
 
         use Agent
-
-        @into Keyword.get(unquote(opts), :into, %{})
 
         @doc """
         Returns a thing that might be used in `Kernel.***_in`
@@ -41,7 +47,7 @@ defmodule Agency.Scaffold do
         Returns the whole container, backed up by the `Agent`.
         """
         @spec this() :: Access.t()
-        def this() do
+        def this do
           __MODULE__
           |> Agent.get(Agency.Scaffold, :this, [])
           |> after_this()
