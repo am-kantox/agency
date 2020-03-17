@@ -1,6 +1,6 @@
-# Agency
+# ![Logo](/stuff/logo-48x48.png?raw=true)  Agency
 
-**One more unnecessary abstraction on top of `Agent`**
+![Test](https://github.com/am-kantox/agency/workflows/Test/badge.svg)  **One more unnecessary abstraction on top of `Agent`**
 
 ## Introduction
 
