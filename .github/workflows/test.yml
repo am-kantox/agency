@@ -1,6 +1,6 @@
 name: Test
 
-on: 
+on:
   push:
     branches:
       - master
@@ -22,5 +22,7 @@ jobs:
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
-      - run: MIX_ENV=ci mix deps.get
-      - run: MIX_ENV=ci mix test
+      - run: |
+          MIX_ENV=test mix deps.get
+          MIX_ENV=test mix compile
+          MIX_ENV=test mix test
