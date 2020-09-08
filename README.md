@@ -1,6 +1,6 @@
-# ![Logo](/stuff/agency-48x48.png?raw=true)  Agency
+# ![Logo](https://github.com/am-kantox/agency/stuff/agency-48x48.png?raw=true)  Agency
 
-![Test](https://github.com/am-kantox/agency/workflows/Test/badge.svg)  **One more unnecessary abstraction on top of `Agent`**
+![Test](https://github.com/am-kantox/agency/workflows/Test/badge.svg)    [![Kantox ❤ OSS](https://img.shields.io/badge/❤-kantox_oss-informational.svg)](https://kantox.com/)    **One more unnecessary abstraction on top of `Agent`**
 
 ## Introduction
 
@@ -31,4 +31,3 @@ end
 ```
 
 ## [Documentation](https://hexdocs.pm/agency).
-
