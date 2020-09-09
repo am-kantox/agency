@@ -32,6 +32,7 @@ end
 
 ### Changelog
 
+- **`0.3.1`** `Agency.Multi` support is not optional anymore
 - **`0.3.0`** `Agency.Multi` supporting the locally distributed agency (eliminating `:gen_server` mailbox bottleneck)
 
 ## [Documentation](https://hexdocs.pm/agency).

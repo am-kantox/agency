@@ -2,7 +2,7 @@ defmodule MapAgent.MixProject do
   use Mix.Project
 
   @app :agency
-  @version "0.3.0"
+  @version "0.3.1"
 
   def project do
     [
@@ -45,7 +45,7 @@ defmodule MapAgent.MixProject do
 
   defp deps do
     [
-      {:libring, "~> 1.0", only: [:dev, :test]},
+      {:libring, "~> 1.0"},
       {:credo, "~> 1.0", only: [:dev, :ci]},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test, :ci], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev}
