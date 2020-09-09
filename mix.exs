@@ -92,7 +92,7 @@ defmodule MapAgent.MixProject do
       canonical: "http://hexdocs.pm/#{@app}",
       logo: "stuff/#{@app}-48x48.png",
       source_url: "https://github.com/am-kantox/#{@app}",
-      assets: "stuff/images",
+      assets: "stuff/images/*.png",
       extras: ["README.md"],
       groups_for_modules: [
         "Generated Example": [
