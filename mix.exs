@@ -47,7 +47,7 @@ defmodule MapAgent.MixProject do
     [
       {:libring, "~> 1.0"},
       {:credo, "~> 1.0", only: [:dev, :ci]},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test, :ci], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test, :ci], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev}
     ]
   end

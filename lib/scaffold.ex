@@ -89,7 +89,7 @@ defmodule Agency.Scaffold do
           backed up by the `Agent`, and updates it.
         """
         @spec get_and_update(
-                GenServer.name(),
+                GenServer.name() | struct(),
                 Agency.keyz(),
                 (Agency.value() -> {get_value, update_value} | :pop)
               ) :: {get_value, Access.container()}
@@ -125,7 +125,7 @@ defmodule Agency.Scaffold do
         Pops the `value` for the specific `key` in the container,
           backed up by the `Agent`.
         """
-        @spec pop(GenServer.name(), Agency.keyz()) ::
+        @spec pop(GenServer.name() | struct(), Agency.keyz()) ::
                 {Agency.value(), Access.container()}
         def pop(name \\ @name, key)
 
