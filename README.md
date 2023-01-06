@@ -1,6 +1,6 @@
-# ![Logo](https://raw.githubusercontent.com/am-kantox/agency/master/stuff/agency-48x48.png)  Agency
+# ![Logo](https://raw.githubusercontent.com/am-kantox/agency/master/stuff/agency-48x48.png)  ~~Agency~~
 
-![Test](https://github.com/am-kantox/agency/workflows/Test/badge.svg)    [![Kantox ❤ OSS](https://img.shields.io/badge/❤-kantox_oss-informational.svg)](https://kantox.com/)    **One more unnecessary abstraction on top of `Agent`**
+Obsoleted by [`PartitionSupervisor`](https://hexdocs.pm/elixir/PartitionSupervisor.html)
 
 ## Introduction
 
